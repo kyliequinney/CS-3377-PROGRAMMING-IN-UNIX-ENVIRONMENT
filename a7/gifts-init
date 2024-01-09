@@ -1,0 +1,23 @@
+#! /bin/bash
+
+if [ "$1" == "new" ] 
+then
+names=()
+balances=()
+shift
+while [ -n "$1" ]
+do
+	names+=("$1")
+	balances+=($2)
+	printf "%6s:%7.2f\n" $1 $2
+	shift 2
+done
+echo Array contents: ${names[@]}
+echo Array contents: ${balances[@]}
+echo "# of items: ${#names[@]} ${#balances[@]}"
+
+for i in ${!names[@]}
+do
+	echo $i : ${names[$i]} ${balances[$i]}
+done
+fi

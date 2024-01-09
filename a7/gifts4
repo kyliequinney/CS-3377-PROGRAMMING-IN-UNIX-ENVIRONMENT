@@ -1,0 +1,62 @@
+#! /bin/bash
+
+names=()			# initialize the arrays
+balances=()
+
+if [ "$1" == "new" ] 
+then
+shift
+while [ -n "$1" ]
+do
+	names+=("$1")
+	balances+=($2)
+	shift 2     # shift 2 arguments, so that we can access next name & balance
+done
+# echo "# of items: ${#names[@]} ${#balances[@]}"
+
+else
+	# implement transaction processing
+	# read the file and load the data to arrays
+	while read name amount
+	do 
+		names+=($name)
+		balances+=($amount)
+	done < gifts4.txt
+
+	# find the giver'index & reduce the balance
+	for i in ${!names[@]}
+	do
+		if [ "$1" == "${names[$i]}" ] 
+		then
+			((balances[$i] -= $2))
+		fi
+	done
+	((amount=$2/($# - 2)))
+	shift 2
+	for receiver in $*
+	do
+		for i in ${!names[@]}
+		do
+			if [ "$receiver" == "${names[$i]}" ] 
+			then
+				((balances[$i] += amount))
+			fi
+		done
+	done
+	# determine the amount for receivers
+	# for each receiver, find the index and add that amount
+
+	# ((balances[0] += 100))
+	# echo Array contents: ${names[@]}
+	# echo Array contents: ${balances[@]}
+	# then try to process the command: gifts4 Jey 100 John Miguel
+fi
+
+for i in ${!names[@]}
+do
+	printf "%6s:%7.2f\n" ${names[$i]} ${balances[$i]}
+done 
+for i in ${!names[@]}
+do
+	echo ${names[$i]} ${balances[$i]}
+done > gifts4.txt
