@@ -1,0 +1,35 @@
+#! /bin/bash
+
+TMPFILE=$USER_$$
+	# cd ~veerasam/a4/*/$userid
+	# echo $userid : `finger $userid | head -1 | cut -f3 -d:`
+gcc -std=c99 -o randompwd randompwd.c
+echo Running "randompwd 15 26 3 3 3 3" 100 times...
+if [ $? -eq 0 ] 
+then 
+		for i in {1..100}
+		do
+			./randompwd 15 26 3 3 3 3  
+		done | tee $TMPFILE
+		echo
+		echo Numbers wrong: `grep -v '[0-9].*[0-9].*[0-9]' $TMPFILE`
+		echo Lowercase wrong: `grep -v '[a-z].*[a-z].*[a-z]' $TMPFILE`
+		echo Uppercase wrong: `grep -v '[A-Z].*[A-Z].*[A-Z]' $TMPFILE`
+		echo Special wrong: "`grep -v '[!@#$%^&*+:;].*[!@#$%^&*+:;].*[!@#$%^&*+:;]' $TMPFILE`"
+		echo Too short: `cut -c14 $TMPFILE | grep '^$' | wc -l`
+		echo Too long: `cut -c27- $TMPFILE | grep -v '^$' | wc -l`
+		echo Half size: `cut -c21- $TMPFILE | grep '^$' | wc -l`
+		echo First char distribution:
+		cut -c1 $TMPFILE | sort | uniq -c | tr '\n' ' ' | paste - -
+fi
+rm -rf $TMPFILE
+
+gcc -std=c99 -o compstr compstr.c
+echo
+echo "Wrong answers for compstr: (that is, no output is expected if your program works properly!)"
+for i in {1..4}
+do
+	./compstr < ~veerasam/bin/dataa4/good$i.txt | grep -v same
+	./compstr < ~veerasam/bin/dataa4/bad$i.txt | grep -v different
+done
+
